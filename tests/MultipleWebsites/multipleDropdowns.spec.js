@@ -1,5 +1,5 @@
 const {test, expect} = require('@playwright/test')
-const { log } = require('console')
+test.use ({viewPort:{width:1526, height: 738}}) 	//set browser pageSize width:1526 * height:738
 
 test ("Verify signup error on password less than 6 chars", async function ({page}) {
     
