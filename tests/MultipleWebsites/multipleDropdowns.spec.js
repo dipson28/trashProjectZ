@@ -1,4 +1,5 @@
 const {test, expect} = require('@playwright/test')
+const { faker, Faker } = require('@faker-js/faker') 	//faker is installed using npm install playwright @faker-js/faker
 test.use ({viewPort:{width:1526, height: 738}}) 	//set browser pageSize width:1526 * height:738
 
 test ("Verify signup error on password less than 6 chars", async function ({page}) {
@@ -17,9 +18,7 @@ test ("Verify signup error on password less than 6 chars", async function ({page
             }
 
     await page.locator("#state").selectOption({value:"Arunachal Pradesh"})
-    //await page.waitForTimeout(3000)
     await page.locator("#hobbies").selectOption(['Playing', 'Swimming'])
-    await page.waitForTimeout(3000)
     await page.locator("//button[@type='submit']").click()
 
     const minCharPassword = await page.locator("//h2[text()='Password must be of atleast 6 characters']").innerText()
@@ -30,9 +29,14 @@ test ("Verify signup error on password less than 6 chars", async function ({page
 
 test ("Verify duplicate error msg Email registerd", async function ({page}) {
     
+   const firstname = faker.internet.username()
+   //const email = faker.internet.email()
+
     await page.goto("https://freelance-learn-automation.vercel.app/signup")
-    await page.getByPlaceholder("Name").fill("Rashmi")
+    await page.getByPlaceholder("Name").fill(firstname)
+    await page.waitForTimeout(3000)
     await page.getByPlaceholder("Email").fill("rashmi.shah3@corge.com")
+    await page.waitForTimeout(3000)
     await page.getByPlaceholder("Password").fill("123456ASdf")
     await page.locator("(//input[contains(@type, 'checkbox')])[2]").check()
     await page.locator("#gender2").check()
@@ -48,9 +52,12 @@ test ("Verify duplicate error msg Email registerd", async function ({page}) {
 
  test ("Verify successful signup", async function ({page}) {
     
+   const firstname = faker.internet.username()
+   const email = faker.internet.email()
+
     await page.goto("https://freelance-learn-automation.vercel.app/signup")
-    await page.getByPlaceholder("Name").fill("Rashmi")
-    await page.getByPlaceholder("Email").fill("rashmi.shaha1@corge.com")
+    await page.getByPlaceholder("Name").fill(firstname)
+    await page.getByPlaceholder("Email").fill(email)
     await page.getByPlaceholder("Password").fill("123456ASdf")
     await page.locator("(//input[contains(@type, 'checkbox')])[2]").check()
     await page.locator("#gender2").check()
@@ -58,7 +65,7 @@ test ("Verify duplicate error msg Email registerd", async function ({page}) {
     await page.locator("#hobbies").selectOption(['Singing', 'Dancing'])
     await page.locator("//button[@type='submit']").click()
     
-    const successToastMsg = await page.waitForSelector("//div[@class='Toastify__toast-body']", {state:'visible'})
+    const successToastMsg = await page.waitForSelector("//div[@class='Toastify__toast-body']", {state:'attached'})
     const successMsg = await page.locator("//div[text()='Signup successfully, Please login!']").innerText()
     console.log(successMsg) //text: 'Signup successfully, Please login!'
     await page.screenshot({path:'./screenshots/multipleDropdowns/SS-SuccessfulSignin.png', fullPage: true })
